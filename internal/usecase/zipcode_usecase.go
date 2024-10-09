@@ -1,8 +1,6 @@
 package usecase
 
 import (
-	"fmt"
-	"temperatura_por_cep/internal/entity"
 	"temperatura_por_cep/internal/infra/api/api"
 	"temperatura_por_cep/internal/infra/api/service"
 )
@@ -20,34 +18,27 @@ type GetAddressOutputDTO struct {
 }
 
 type AddressUseCase struct {
-	fetcher api.AddressFetcher
+	Fetcher api.AddressFetcher
 }
 
 func NewAddressUseCase(fetcher api.AddressFetcher) *AddressUseCase {
-	return &AddressUseCase{fetcher: fetcher}
+	return &AddressUseCase{Fetcher: fetcher}
 }
 
-func (u *AddressUseCase) GetAddressByZipCode(input GetAddressInputDTO) (*entity.Address, error) {
-	addressData, err := service.FetchAddress(input.ZipCode, u.fetcher)
+func (u *AddressUseCase) GetAddressByZipCode(input GetAddressInputDTO) (*GetAddressOutputDTO, error) {
+	addressData, err := service.FetchAddress(input.ZipCode, u.Fetcher)
 
 	if err != nil {
 		return nil, err
 	}
 
-	// Imprimindo o conteúdo do addressData
-	fmt.Printf("Address: %+v\n", addressData)
-
-	// Criando um novo Address com os dados obtidos
-	newAddress, err := entity.NewConsultZipCode(
-		addressData.ZipCode,
-		addressData.Street,
-		addressData.Neighborhood,
-		addressData.City,
-		addressData.State,
-	)
-	if err != nil {
-		return nil, err
+	output := &GetAddressOutputDTO{
+		ZipCode:      addressData.ZipCode,
+		Street:       addressData.Street,
+		Neighborhood: addressData.Neighborhood,
+		City:         addressData.City,
+		State:        addressData.State,
 	}
 
-	return newAddress, nil
+	return output, nil
 }

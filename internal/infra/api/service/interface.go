@@ -8,7 +8,7 @@ type AddressFetcher interface {
 }
 
 type AddressData struct {
-	ZipCode      string
+	CEP          string
 	Street       string
 	Neighborhood string
 	City         string

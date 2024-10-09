@@ -9,7 +9,7 @@ import (
 
 type DefaultAddressFetcher struct{}
 
-func (f *DefaultAddressFetcher) FetchAddress(cep string) (entity.BrasilAPIAddress, error) {
+func (f *DefaultAddressFetcher) FetchAddressFromBrasilAPI(cep string) (entity.BrasilAPIAddress, error) {
 	//time.Sleep(2 * time.Second)
 	var address entity.BrasilAPIAddress
 	resp, err := http.Get(fmt.Sprintf("https://brasilapi.com.br/api/cep/v1/%s", cep))
