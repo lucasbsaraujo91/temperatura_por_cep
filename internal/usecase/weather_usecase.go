@@ -9,9 +9,6 @@ import (
 )
 
 // DTOs de entrada e saída
-type GetAddressInputDTO struct {
-	ZipCode string
-}
 
 type GetWeatherOutputDTO struct {
 	TempC float64 `json:"temp_c"`
