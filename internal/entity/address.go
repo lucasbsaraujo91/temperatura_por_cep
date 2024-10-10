@@ -24,6 +24,11 @@ func NewConsultZipCode(zipCode string, street string, neighborhood string, city 
 		State:        state,
 	}
 
+	err := address.IsValid()
+	if err != nil {
+		return nil, err
+	}
+
 	return address, nil
 }
 

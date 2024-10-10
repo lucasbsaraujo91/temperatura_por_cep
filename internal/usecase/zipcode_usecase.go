@@ -1,8 +1,8 @@
 package usecase
 
 import (
-	"temperatura_por_cep/internal/infra/api/api"
-	"temperatura_por_cep/internal/infra/api/service"
+	"temperatura_por_cep/internal/infra/api_busca_cep/api"
+	"temperatura_por_cep/internal/infra/api_busca_cep/service"
 )
 
 type GetAddressInputDTO struct {

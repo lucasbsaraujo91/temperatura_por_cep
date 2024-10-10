@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"temperatura_por_cep/internal/infra/api/entity"
+	"temperatura_por_cep/internal/infra/api_busca_cep/entity"
 )
 
 // Remove the redeclaration of DefaultAddressFetcher

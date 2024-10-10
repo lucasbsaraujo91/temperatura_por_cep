@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"temperatura_por_cep/internal/infra/api/api"
-	"temperatura_por_cep/internal/infra/api/entity"
+	"temperatura_por_cep/internal/infra/api_busca_cep/api"
+	"temperatura_por_cep/internal/infra/api_busca_cep/entity"
 )
 
 // AddressDTO representa os dados de um endereço.

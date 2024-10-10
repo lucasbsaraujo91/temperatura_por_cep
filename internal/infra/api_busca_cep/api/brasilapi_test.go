@@ -5,28 +5,23 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
-	"temperatura_por_cep/internal/infra/api/entity"
+	"temperatura_por_cep/internal/infra/api_busca_cep/entity"
 	"testing"
 )
 
-func TestFetchAddressFromViaCEP(t *testing.T) {
-	expectedAddress := entity.ViaCEPAddress{
-		CEP:         "12345678",
-		Logradouro:  "Rua Domingos de Morais",
-		Complemento: "Complemento",
-		Bairro:      "Vila Mariana",
-		Localidade:  "São Paulo",
-		UF:          "SP",
-		IBGE:        "123456",
-		GIA:         "1234",
-		DDD:         "11",
-		SIAFI:       "1234",
+func TestFetchAddressFromBrasilAPI(t *testing.T) {
+	expectedAddress := entity.BrasilAPIAddress{
+		CEP:          "01001-000",
+		State:        "SP",
+		City:         "São Paulo",
+		Neighborhood: "Sé",
+		Street:       "Praça da Sé",
 	}
 
 	// Cria um servidor HTTP de teste
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/ws/01001-000/json/" {
-			t.Fatalf("expected request to /ws/01001-000/json/, got %s", r.URL.Path)
+		if r.URL.Path != "/api/cep/v1/01001-000" {
+			t.Fatalf("expected request to /api/cep/v1/01001-000, got %s", r.URL.Path)
 		}
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(expectedAddress)
@@ -34,23 +29,23 @@ func TestFetchAddressFromViaCEP(t *testing.T) {
 	defer ts.Close()
 
 	// Substitui a URL base da função para apontar para o servidor de teste
-	//originalURL := "http://viacep.com.br/ws/"
-	newURL := ts.URL + "/ws/"
+	//originalURL := "https://brasilapi.com.br/api/cep/v1/"
+	newURL := ts.URL + "/api/cep/v1/"
 
 	client := &http.Client{}
 	cep := "01001-000"
 
 	// Cria uma função auxiliar para redirecionar a URL
-	redirectedFetchAddress := func(cep string) (entity.ViaCEPAddress, error) {
-		var address entity.ViaCEPAddress
-		resp, err := client.Get(newURL + cep + "/json/")
+	redirectedFetchAddress := func(cep string) (entity.BrasilAPIAddress, error) {
+		var address entity.BrasilAPIAddress
+		resp, err := client.Get(newURL + cep)
 		if err != nil {
 			return address, err
 		}
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
-			return address, fmt.Errorf("failed to fetch address from ViaCEP: %s", resp.Status)
+			return address, fmt.Errorf("failed to fetch address from BrasilAPI: %s", resp.Status)
 		}
 
 		if err := json.NewDecoder(resp.Body).Decode(&address); err != nil {
