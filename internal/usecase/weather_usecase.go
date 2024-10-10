@@ -3,22 +3,28 @@ package usecase
 
 import (
 	"fmt"
-	"io"
-	"strings"
 	"temperatura_por_cep/internal/entity"
 	"temperatura_por_cep/internal/infra/api_busca_temperatura/service"
-	"unicode"
-
-	"golang.org/x/text/transform"
-	"golang.org/x/text/unicode/norm"
+	"temperatura_por_cep/internal/utils"
 )
+
+// DTOs de entrada e saída
+type GetAddressInputDTO struct {
+	ZipCode string
+}
+
+type GetWeatherOutputDTO struct {
+	TempC float64 `json:"temp_c"`
+	TempF float64 `json:"temp_f"`
+	TempK float64 `json:"temp_k"`
+}
 
 type WeatherUseCase struct {
 	AddressUseCase *AddressUseCase
 	WeatherService *service.WeatherService
 }
 
-func (u *WeatherUseCase) GetWeatherByZipCode(zipCode string) (*entity.Weather, error) {
+func (u *WeatherUseCase) GetWeatherByZipCode(zipCode string) (*GetWeatherOutputDTO, error) {
 	// Busca o endereço pelo CEP
 	address, err := u.getAddressByZipCode(zipCode)
 	if err != nil {
@@ -53,9 +59,8 @@ func (u *WeatherUseCase) getAddressByZipCode(zipCode string) (*entity.Address, e
 	return address, nil
 }
 
-func (u *WeatherUseCase) getWeatherByCity(city string, state string) (*entity.Weather, error) {
-
-	newCity := sanitizeCity(removeAccents(city))
+func (u *WeatherUseCase) getWeatherByCity(city string, state string) (*GetWeatherOutputDTO, error) {
+	newCity := utils.SanitizeCity(utils.RemoveAccents(city))
 
 	fullWeather, err := u.WeatherService.FetchWeatherByCity(newCity, state)
 	if err != nil {
@@ -63,31 +68,11 @@ func (u *WeatherUseCase) getWeatherByCity(city string, state string) (*entity.We
 	}
 
 	// Converte a resposta para o formato desejado
-	weather := &entity.Weather{
+	weather := &GetWeatherOutputDTO{
 		TempC: fullWeather.Current.TempC,
-		TempF: (fullWeather.Current.TempC * 1.8) + 32,
-		TempK: fullWeather.Current.TempC + 273.15,
+		TempF: utils.ConvertCelsiusToFahrenheit(fullWeather.Current.TempC),
+		TempK: utils.ConvertCelsiusToKelvin(fullWeather.Current.TempC),
 	}
 
 	return weather, nil
-}
-
-func sanitizeCity(city string) string {
-	return strings.ReplaceAll(city, " ", "+")
-}
-
-// removeAccents remove acentos de uma string
-func removeAccents(str string) string {
-	t := transform.NewReader(strings.NewReader(str), norm.NFD)
-	normalized, _ := io.ReadAll(t)
-	result := string(normalized)
-
-	var sb strings.Builder
-	for _, r := range result {
-		if unicode.Is(unicode.Mn, r) {
-			continue // Ignora caracteres de acento
-		}
-		sb.WriteRune(r)
-	}
-	return sb.String()
 }
