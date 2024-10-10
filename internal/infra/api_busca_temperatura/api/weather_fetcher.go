@@ -18,7 +18,6 @@ func NewWeatherFetcher(apiKey string) *WeatherFetcherImpl {
 
 func (o *WeatherFetcherImpl) FetchWeather(city, country string) (entity.FullWeather, error) {
 
-	fmt.Printf("https://api.weatherapi.com/v1/current.json?key=%s&q=%s,%s&lang=pt_br", o.APIKey, city, country)
 	url := fmt.Sprintf("https://api.weatherapi.com/v1/current.json?key=%s&q=%s,%s&lang=pt_br", o.APIKey, city, country)
 
 	// Faz a requisição HTTP GET

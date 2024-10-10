@@ -1,6 +1,9 @@
 package entity
 
-import "errors"
+import (
+	"errors"
+	"regexp"
+)
 
 type Address struct {
 	ZipCode      string // Para ambos os CEPs
@@ -34,8 +37,10 @@ func NewConsultZipCode(zipCode string, street string, neighborhood string, city 
 
 func (a *Address) IsValid() error {
 	if len(a.ZipCode) != 8 {
-		return errors.New("invalid zipcodeEE")
+		return errors.New("invalid zipcode: must be 8 digits")
 	}
-
+	if matched, _ := regexp.MatchString("^[0-9]+$", a.ZipCode); !matched {
+		return errors.New("invalid zipcode: must contain only digits")
+	}
 	return nil
 }
