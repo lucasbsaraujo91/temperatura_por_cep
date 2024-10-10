@@ -21,6 +21,7 @@ type Current struct {
 	LastUpdated   string    `json:"last_updated"`
 	TempC         float64   `json:"temp_c"`
 	TempF         float64   `json:"temp_f"`
+	TempK         float64   `json:"temp_k"`
 	IsDay         int       `json:"is_day"`
 	Condition     Condition `json:"condition"`
 	WindMph       float64   `json:"wind_mph"`
@@ -52,4 +53,9 @@ type Condition struct {
 	Text string `json:"text"`
 	Icon string `json:"icon"`
 	Code int    `json:"code"`
+}
+
+type FullWeather struct {
+	Location Location `json:"location"`
+	Current  Current  `json:"current"`
 }

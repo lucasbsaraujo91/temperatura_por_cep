@@ -1,1 +1,12 @@
 GET http://localhost:8060/address/06765000
+
+########
+
+GET http://localhost:8060/weather/taboao da serra/BR
+
+
+######
+
+GET http://localhost:8060/weather/zipcode/06765000
+
+

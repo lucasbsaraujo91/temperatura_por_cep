@@ -19,6 +19,6 @@ func NewWeatherService(apiKey string, fetcher WeatherFetcher) *WeatherService {
 }
 
 // FetchWeatherByCity busca o clima para uma cidade e país
-func (s *WeatherService) FetchWeatherByCity(city, country string) (entity.Current, error) {
-	return s.Fetcher.FetchWeather(city, country, s.APIKey)
+func (s *WeatherService) FetchWeatherByCity(city, country string) (entity.FullWeather, error) {
+	return s.Fetcher.FetchWeather(city, country)
 }

@@ -6,5 +6,5 @@ import (
 
 // WeatherFetcher define a interface para buscar o clima
 type WeatherFetcher interface {
-	FetchWeather(city, country, apiKey string) (entity.Current, error)
+	FetchWeather(city, country string) (entity.FullWeather, error)
 }
