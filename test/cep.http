@@ -2,6 +2,6 @@ GET http://localhost:8060/address/06765000
 
 ######
 
-GET http://localhost:8060/weather/zipcode/04344000
+GET http://localhost:8060/weather/zipcode/06765000
 
 

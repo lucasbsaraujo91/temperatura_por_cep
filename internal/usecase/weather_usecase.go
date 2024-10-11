@@ -2,7 +2,6 @@
 package usecase
 
 import (
-	"fmt"
 	"temperatura_por_cep/internal/entity"
 	"temperatura_por_cep/internal/infra/api_busca_temperatura/service"
 	"temperatura_por_cep/internal/utils"
@@ -44,7 +43,7 @@ func (u *WeatherUseCase) getAddressByZipCode(zipCode string) (*entity.Address, e
 	// Chama o método GetAddressByZipCode
 	addressOutput, err := u.AddressUseCase.GetAddressByZipCode(input)
 	if err != nil {
-		return nil, fmt.Errorf("erro ao obter endereço: %v", err)
+		return nil, err
 	}
 
 	address := &entity.Address{

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"temperatura_por_cep/internal/infra/api_busca_cep/entity"
 )
@@ -13,6 +14,7 @@ import (
 
 func (f *DefaultAddressFetcher) FetchAddressFromViaCEP(cep string) (entity.ViaCEPAddress, error) {
 	//time.Sleep(2 * time.Second)
+	cep = strings.ReplaceAll(cep, "-", "")
 	var address entity.ViaCEPAddress
 	resp, err := http.Get(fmt.Sprintf("http://viacep.com.br/ws/%s/json/", cep))
 	if err != nil {
@@ -25,5 +27,6 @@ func (f *DefaultAddressFetcher) FetchAddressFromViaCEP(cep string) (entity.ViaCE
 	if err := json.NewDecoder(resp.Body).Decode(&address); err != nil {
 		return address, err
 	}
+	address.FormatCEP()
 	return address, nil
 }
