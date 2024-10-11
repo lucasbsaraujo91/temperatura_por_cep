@@ -24,8 +24,17 @@ func handleAddressRequest(w http.ResponseWriter, cep string, fetcher api.Address
 	addressUseCase := usecase.NewAddressUseCase(fetcher)
 	address, err := addressUseCase.GetAddressByZipCode(usecase.GetAddressInputDTO{ZipCode: cep})
 	if err != nil {
-		http.Error(w, fmt.Sprintf("Error fetching address: %v", err), http.StatusInternalServerError)
-		return
+		switch err.Error() {
+		case "invalid zipcode":
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity) // 422
+			return
+		case "can not find zipcode":
+			http.Error(w, err.Error(), http.StatusNotFound) // 404
+			return
+		default:
+			http.Error(w, err.Error(), http.StatusNotFound) // 404
+			return
+		}
 	}
 
 	sendJSONResponse(w, address)
@@ -69,7 +78,22 @@ func main() {
 
 func handleWeatherByZipCode(w http.ResponseWriter, zipCode string, weatherUseCase *usecase.WeatherUseCase) {
 	weather, err := weatherUseCase.GetWeatherByZipCode(zipCode)
+
 	if err != nil {
+		// Verifica se o erro é um erro de CEP inválido
+		if err.Error() == "invalid zipcode" {
+			http.Error(w, "invalid zipcode", http.StatusUnprocessableEntity)
+			return
+		}
+
+		// Verifica se o erro é de CEP não encontrado
+		if err.Error() == "failed to fetch address from BrasilAPI: 404 Not Found" ||
+			err.Error() == "invalid zipcode: must be 8 digits" {
+			http.Error(w, "can not find zipcode", http.StatusNotFound)
+			return
+		}
+
+		// Para outros erros, retorna erro interno
 		http.Error(w, fmt.Sprintf("Error fetching weather: %v", err), http.StatusInternalServerError)
 		return
 	}
