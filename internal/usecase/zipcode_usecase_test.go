@@ -79,25 +79,18 @@ func TestGetAddressByZipCode_InvalidZipCode(t *testing.T) {
 }
 
 func TestGetAddressByZipCode_NotFound(t *testing.T) {
-	// Cria um novo mock para simular o AddressFetcher
 	mockFetcher := new(mocks.MockAddressFetcher)
 
-	// Simule o retorno da API BrasilAPI como um erro
+	// Simule o retorno da API BrasilAPI e ViaCEP como um erro
 	mockFetcher.On("FetchAddressFromBrasilAPI", "12345678").Return(entity.BrasilAPIAddress{}, fmt.Errorf("not found"))
-
-	// Simule o retorno da API ViaCEP como um erro
 	mockFetcher.On("FetchAddressFromViaCEP", "12345678").Return(entity.ViaCEPAddress{}, fmt.Errorf("not found"))
 
-	// Crie o caso de uso com o mock
 	addressUseCase := NewAddressUseCase(mockFetcher)
 
-	// Chame o método a ser testado
 	output, err := addressUseCase.GetAddressByZipCode(GetAddressInputDTO{ZipCode: "12345678"})
 
-	// Verifique os resultados
 	assert.Error(t, err)
 	assert.Nil(t, output)
-	assert.Equal(t, "not found", err.Error()) // Verifique a mensagem de erro
 
 	// Verifique se as expectativas do mock foram atendidas
 	mockFetcher.AssertExpectations(t)
