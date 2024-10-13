@@ -1,57 +1,86 @@
-package usecase_test
+package usecase
 
 import (
-	"errors"
-	"temperatura_por_cep/internal/infra/api_busca_cep/api"
-	"temperatura_por_cep/internal/usecase"
+	"fmt"
 	"testing"
+
+	"temperatura_por_cep/internal/infra/api_busca_cep/entity"
+	"temperatura_por_cep/internal/infra/api_busca_cep/mocks"
+
+	"github.com/stretchr/testify/assert"
 )
 
-// Mock para o AddressFetcher
-type MockAddressFetcher struct{}
+func TestGetAddressByZipCode_Success(t *testing.T) {
+	mockFetcher := new(mocks.MockAddressFetcher)
 
-func (m *MockAddressFetcher) FetchAddressByZipCode(zipCode string) (api.Address, error) {
-	if zipCode == "12345678" {
-		return api.Address{
-			ZipCode: "12345678",
-			City:    "São Paulo",
-		}, nil
-	}
-	return api.Address{}, errors.New("invalid zipcode")
-}
+	// Simule o retorno da API BrasilAPI
+	mockFetcher.On("FetchAddressFromBrasilAPI", "12345678").Return(entity.BrasilAPIAddress{
+		CEP:          "12345678",
+		Street:       "Rua Exemplo",
+		Neighborhood: "Bairro Exemplo",
+		City:         "São Paulo",
+		State:        "SP",
+	}, nil)
 
-func TestGetAddressByZipCode_ValidZipCode(t *testing.T) {
-	fetcher := &MockAddressFetcher{}
-	addressUseCase := usecase.NewAddressUseCase(fetcher)
+	// Simule o retorno da API ViaCEP se for chamado
+	mockFetcher.On("FetchAddressFromViaCEP", "12345678").Return(entity.ViaCEPAddress{
+		CEP:        "12345678",
+		Logradouro: "Rua Exemplo",
+		Bairro:     "Bairro Exemplo",
+		Localidade: "São Paulo",
+		UF:         "SP",
+	}, nil)
 
-	input := usecase.GetAddressInputDTO{
-		ZipCode: "12345678",
-	}
-	address, err := addressUseCase.GetAddressByZipCode(input)
-	if err != nil {
-		t.Fatalf("expected no error, got %v", err)
-	}
+	// Crie o caso de uso com o mock
+	addressUseCase := NewAddressUseCase(mockFetcher)
 
-	if address.ZipCode != "12345678" {
-		t.Errorf("expected ZipCode to be '12345678', got '%s'", address.ZipCode)
-	}
-	if address.City != "São Paulo" {
-		t.Errorf("expected City to be 'São Paulo', got '%s'", address.City)
-	}
+	// Chame o método a ser testado
+	output, err := addressUseCase.GetAddressByZipCode(GetAddressInputDTO{ZipCode: "12345678"})
+
+	// Verifique os resultados
+	assert.NoError(t, err)
+	assert.NotNil(t, output)
+	assert.Equal(t, "12345678", output.ZipCode)
+	assert.Equal(t, "Rua Exemplo", output.Street)
+	assert.Equal(t, "Bairro Exemplo", output.Neighborhood)
+	assert.Equal(t, "São Paulo", output.City)
+	assert.Equal(t, "SP", output.State)
+
+	// Verifique se a expectativa do mock foi atendida
+	mockFetcher.AssertExpectations(t)
 }
 
 func TestGetAddressByZipCode_InvalidZipCode(t *testing.T) {
-	fetcher := &MockAddressFetcher{}
-	addressUseCase := usecase.NewAddressUseCase(fetcher)
+	mockFetcher := new(mocks.MockAddressFetcher)
 
-	input := usecase.GetAddressInputDTO{
-		ZipCode: "00000000",
-	}
-	_, err := addressUseCase.GetAddressByZipCode(input)
-	if err == nil {
-		t.Fatalf("expected error, got nil")
-	}
-	if err.Error() != "invalid zipcode" {
-		t.Errorf("expected error message 'invalid zipcode', got '%s'", err.Error())
-	}
+	addressUseCase := NewAddressUseCase(mockFetcher)
+
+	// Chame o método com um CEP inválido
+	output, err := addressUseCase.GetAddressByZipCode(GetAddressInputDTO{ZipCode: "invalid"})
+
+	// Verifique os resultados
+	assert.Error(t, err)
+	assert.Nil(t, output)
+}
+
+func TestGetAddressByZipCode_NotFound(t *testing.T) {
+	mockFetcher := new(mocks.MockAddressFetcher)
+
+	// Simula o retorno de erro quando o CEP não é encontrado
+	mockFetcher.On("FetchAddressFromBrasilAPI", "12345678").Return(entity.BrasilAPIAddress{}, fmt.Errorf("not found"))
+	mockFetcher.On("FetchAddressFromViaCEP", "12345678").Return(entity.ViaCEPAddress{}, fmt.Errorf("not found"))
+
+	// Crie o caso de uso com o mock
+	addressUseCase := NewAddressUseCase(mockFetcher)
+
+	// Chame o método a ser testado
+	output, err := addressUseCase.GetAddressByZipCode(GetAddressInputDTO{ZipCode: "12345678"})
+
+	// Verifique os resultados
+	assert.Error(t, err)
+	assert.Nil(t, output)
+	assert.Equal(t, "not found", err.Error())
+
+	// Verifique se as expectativas do mock foram atendidas
+	mockFetcher.AssertExpectations(t)
 }
