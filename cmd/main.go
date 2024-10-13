@@ -73,7 +73,7 @@ func main() {
 
 	r.Get("/address/{cep}", AddressHandler(fetcher))
 
-	http.ListenAndServe(":8060", r)
+	http.ListenAndServe(":8080", r)
 }
 
 func handleWeatherByZipCode(w http.ResponseWriter, zipCode string, weatherUseCase *usecase.WeatherUseCase) {
