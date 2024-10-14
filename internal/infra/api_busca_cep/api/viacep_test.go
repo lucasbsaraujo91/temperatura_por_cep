@@ -11,16 +11,12 @@ import (
 
 func TestFetchAddressFromViaCEP(t *testing.T) {
 	expectedAddress := entity.ViaCEPAddress{
-		CEP:         "12345678",
+		Cep:         "12345678",
 		Logradouro:  "Rua Domingos de Morais",
 		Complemento: "Complemento",
 		Bairro:      "Vila Mariana",
 		Localidade:  "São Paulo",
 		UF:          "SP",
-		IBGE:        "123456",
-		GIA:         "1234",
-		DDD:         "11",
-		SIAFI:       "1234",
 	}
 
 	// Cria um servidor HTTP de teste

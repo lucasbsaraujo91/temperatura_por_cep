@@ -3,7 +3,7 @@ package entity
 import "strings"
 
 type ViaCEPAddress struct {
-	CEP         string `json:"cep"`
+	Cep         string `json:"cep"`
 	Logradouro  string `json:"logradouro"`
 	Complemento string `json:"complemento"`
 	Bairro      string `json:"bairro"`
@@ -16,5 +16,5 @@ type ViaCEPAddress struct {
 }
 
 func (v *ViaCEPAddress) FormatCEP() {
-	v.CEP = strings.ReplaceAll(v.CEP, "-", "")
+	v.Cep = strings.ReplaceAll(v.Cep, "-", "")
 }

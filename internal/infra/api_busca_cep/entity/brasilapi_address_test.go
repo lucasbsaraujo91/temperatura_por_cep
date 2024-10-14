@@ -8,14 +8,14 @@ import (
 func TestBrasilAddressCreation(t *testing.T) {
 
 	address := BrasilAPIAddress{
-		CEP:          "12345678",
+		Cep:          "12345678",
 		State:        "SP",
 		City:         "São Paulo",
 		Neighborhood: "Vila Mariana",
 		Street:       "Rua Domingos de Morais",
 	}
 
-	if address.CEP != "12345678" {
+	if address.Cep != "12345678" {
 		t.Error("CEP should be 12345678")
 	}
 
@@ -41,7 +41,7 @@ func TestBrasilAddressCreationWithEmptyValues(t *testing.T) {
 
 	address := BrasilAPIAddress{}
 
-	if address.CEP != "" {
+	if address.Cep != "" {
 		t.Error("CEP should be empty")
 	}
 
@@ -66,7 +66,7 @@ func TestBrasilAddressCreationWithEmptyValues(t *testing.T) {
 func TestBrasilAddressMarshal(t *testing.T) {
 
 	address := BrasilAPIAddress{
-		CEP:          "12345678",
+		Cep:          "12345678",
 		State:        "SP",
 		City:         "São Paulo",
 		Neighborhood: "Vila Mariana",
@@ -95,7 +95,7 @@ func TestBrasilAddressUnmarshal(t *testing.T) {
 		t.Errorf("error unmarshalling JSON: %v", err)
 	}
 
-	if address.CEP != "12345678" {
+	if address.Cep != "12345678" {
 		t.Error("CEP should be 12345678")
 	}
 

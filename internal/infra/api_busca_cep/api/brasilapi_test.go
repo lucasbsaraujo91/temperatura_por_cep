@@ -11,7 +11,7 @@ import (
 
 func TestFetchAddressFromBrasilAPI(t *testing.T) {
 	expectedAddress := entity.BrasilAPIAddress{
-		CEP:          "01001-000",
+		Cep:          "01001-000",
 		State:        "SP",
 		City:         "São Paulo",
 		Neighborhood: "Sé",
