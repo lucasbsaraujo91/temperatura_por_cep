@@ -32,3 +32,25 @@ Entrega:
     Testes automatizados demonstrando o funcionamento.
     Utilize docker/docker-compose para que possamos realizar os testes de sua aplicação.
     Deploy realizado no Google Cloud Run (free tier) e endereço ativo para ser acessado.
+
+------------------------------------------------------------------------------------------------------------------------
+
+Descrição:
+
+    Para esse projeto utilizei o exercício anterior sobre a arquitetura clean architecture e o exercicio onde utilizamos go routines e duas apis para pesquisar CEP e a resposta mais rápido e a que utilizamos para responder a chamada da requisição.
+    Por opção criei uma chamada apenas para trazer os dados do CEP na rota /address/06765000
+
+Realizar os testes via brownser local: 
+
+    Para realizar os testes locais http://localhost:8081/weather/zipcode/{cep}
+
+Realizar os testes via aplicação em prod:
+
+    Para realizar os testes da aplicação no ar: https://temperatura-por-cep-773278080263.us-central1.run.app/weather/zipcode/{cep}
+
+Para rodas os testes locais:
+
+    Na raiz os projeto via terminal rodar o seguinte comando go test -cover ./...
+
+    
+
