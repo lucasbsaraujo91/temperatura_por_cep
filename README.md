@@ -51,6 +51,11 @@ Realizar os testes via aplicação em prod:
 Para rodas os testes locais:
 
     Na raiz os projeto via terminal rodar o seguinte comando go test -cover ./...
+    
+Link Cloud run
+
+https://temperatura-por-cep-773278080263.us-central1.run.app/weather/zipcode/06765000
+
 
     
 
